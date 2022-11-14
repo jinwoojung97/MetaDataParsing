@@ -20,15 +20,15 @@ enum Tag{
 
     var query : String{
         switch self{
-        case .content: return "content"
-        case .image: return "meta[property=og:image]"
-        case .title: return "meta[property=og:title]"
+        case .content    : return "content"
+        case .image      : return "meta[property=og:image]"
+        case .title      : return "meta[property=og:title]"
         case .description: return "meta[property=og:description]"
-        case .url: return "meta[property=og:url]"
-        case .host: return ""
-        case .appURL: return "meta[property=al:ios:url]"
-        case .appStoreID: return "meta[property=al:ios:app_store_id]"
-        case .appName: return "meta[property=al:ios:app_name]"
+        case .url        : return "meta[property=og:url]"
+        case .host       : return ""
+        case .appURL     : return "meta[property=al:ios:url]"
+        case .appStoreID : return "meta[property=al:ios:app_store_id]"
+        case .appName    : return "meta[property=al:ios:app_name]"
         }
     }
 }
