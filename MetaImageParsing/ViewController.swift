@@ -9,7 +9,6 @@ import UIKit
 
 import RxSwift
 import RxGesture
-import SwiftSoup
 import Alamofire
 import SnapKit
 import Then
@@ -136,37 +135,3 @@ class ViewController: UIViewController {
         }
     }
 }
-
-class MetaData{
-    var image: String = "" /// 이미지
-    var title: String = "" /// 제목
-    var description : String = "" /// 부제
-    var url: String = "" /// 전체 url
-    var host: String = "" /// host ex) naver.com
-    var appURL: String = "" /// ios app url
-    var appStoreID: String = "" /// AppStore ID
-    var appName: String = "" /// App Name
-
-    func setData(with html: String){
-        do {
-            let doc: Document = try SwiftSoup.parse(html)
-            let elements: Element = doc.head()!
-            self.image = (try elements.select(Tag.image.query).attr(Tag.content.query))
-            self.title = (try elements.select(Tag.title.query).attr(Tag.content.query))
-            self.description = (try elements.select(Tag.description.query).attr(Tag.content.query))
-            self.url = (try elements.select(Tag.url.query).attr(Tag.content.query))
-            self.host = URL(string: url)?.host ?? ""
-            
-            self.appURL = (try elements.select(Tag.appURL.query).attr(Tag.content.query))
-            self.appStoreID = (try elements.select(Tag.appStoreID.query).attr(Tag.content.query))
-            self.appName = (try elements.select(Tag.appName.query).attr(Tag.content.query))
-        } catch {
-            print("crawl error")
-        }
-    }
-}
-
-
-
-
-
