@@ -55,6 +55,13 @@ final class ViewController: UIViewController {
         $0.font = UIFont.systemFont(ofSize: 10)
     }
     
+    private var saveImageButton = UIButton().then{
+        $0.backgroundColor = .black
+        $0.setTitle("save", for: .normal)
+        $0.setTitleColor(.white, for: .normal)
+        $0.titleLabel?.textAlignment = .center
+    }
+    
     // MARK: -UI
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -64,7 +71,7 @@ final class ViewController: UIViewController {
     }
     
     private func addComponent(){
-        [textField, parseButton, imageView, titleLabel, descriptionLabel, hostLabel].forEach(view.addSubview)
+        [textField, parseButton, imageView, titleLabel, descriptionLabel, hostLabel, saveImageButton].forEach(view.addSubview)
     }
     
     private func setConstraint(){
@@ -104,6 +111,13 @@ final class ViewController: UIViewController {
             $0.centerX.equalToSuperview()
             $0.top.equalTo(descriptionLabel.snp.bottom).offset(10)
         }
+        
+        saveImageButton.snp.makeConstraints{
+            $0.height.equalTo(30)
+            $0.width.equalTo(50)
+            $0.centerX.equalToSuperview()
+            $0.top.equalTo(hostLabel.snp.bottom).offset(10)
+        }
     }
     
     private func bind(){
@@ -118,13 +132,19 @@ final class ViewController: UIViewController {
             .filter{[weak self] _ in (self?.textField.isFirstResponder)! }
             .bind{[weak self] _ in self?.textField.resignFirstResponder() }
             .disposed(by: disposeBag)
+        
+        saveImageButton.rx.tapGesture()
+            .when(.recognized)
+            .bind{[weak self] _ in
+                self?.saveImage()
+            }.disposed(by: disposeBag)
     }
     
     //MARK: -Feature
     private func parse(url: String){
         AF.request(url).responseString {[weak self] (response) in
             guard let html = response.value else { return }
-            var metaData = MetaData()
+            let metaData = MetaData()
             metaData.setData(with: html)
             dump(metaData)
             self?.show(metaData)
@@ -136,5 +156,19 @@ final class ViewController: UIViewController {
         titleLabel.text = data.title
         descriptionLabel.text = data.description
         hostLabel.text = data.host
+    }
+    
+    /// 이미지 저장
+    private func saveImage(){
+        guard let image = self.imageView.image else{ return }
+        UIImageWriteToSavedPhotosAlbum(image, self, #selector(self.image(_:didFinishSavingWithError:contextInfo:)), nil)
+    }
+    
+    @objc func image(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
+        if let error = error {
+            print(error.localizedDescription)
+        } else {
+            print("이미지 저장완료~")
+        }
     }
 }
